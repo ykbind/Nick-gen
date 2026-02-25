@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow p-5">
+            <h2 class="text-center mb-4">AI Interview Readiness Analyzer</h2>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <form action="{{ url_for('analyze_interview') }}" method="POST" class="border p-4 rounded bg-light">
+                        <div class="mb-3">
+                            <label class="form-label">Technical Confidence (1-5)</label>
+                            <input type="range" class="form-range" name="confidence" min="1" max="5" value="3">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">DSA Knowledge (1-5)</label>
+                            <input type="range" class="form-range" name="dsa" min="1" max="5" value="3">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Communication Rating (1-5)</label>
+                            <input type="range" class="form-range" name="comm" min="1" max="5" value="3">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Project Experience (1-5)</label>
+                            <input type="range" class="form-range" name="exp" min="1" max="5" value="3">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Analyze Readiness</button>
+                    </form>
+                </div>
+                
+                <div class="col-md-6">
+                    {% if result %}
+                    <div class="result-box p-3 border rounded bg-white h-100">
+                        <h4 class="text-success mb-3">Analysis Result</h4>
+                        
+                        <div class="mb-3">
+                            <h6><span class="badge bg-success">Strengths</span></h6>
+                            <ul>
+                                {% for s in result.strengths %}
+                                <li>{{ s }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6><span class="badge bg-danger">Areas for Concern</span></h6>
+                            <ul>
+                                {% for w in result.weaknesses %}
+                                <li>{{ w }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6><span class="badge bg-info">Improvement Plan</span></h6>
+                            <ul>
+                                {% for i in result.improvements %}
+                                <li>{{ i }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                        <p>Fill out the form to see your analysis.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

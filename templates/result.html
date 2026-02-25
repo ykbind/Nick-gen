@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-lg text-center p-5 result-card">
+            <div class="mb-4">
+                {% if user.avatar_path %}
+                <img src="{{ url_for('static', filename='avatars/' + user.avatar_path) }}" alt="Avatar" class="img-fluid rounded-circle border border-primary border-5 shadow avatar-preview" style="width: 200px; height: 200px; background: #fff;">
+                {% else %}
+                <div class="rounded-circle border border-secondary border-5 shadow mx-auto d-flex align-items-center justify-content-center bg-light" style="width: 200px; height: 200px;">
+                    <span class="display-1 text-muted">{{ user.name[0]|upper if user.name else '?' }}</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <h1 class="display-3 fw-bold text-dark">{{ user.nickname }}</h1>
+            <p class="h4 text-primary">{{ user.name }}'s Digital Identity</p>
+            
+            <div class="row mt-5">
+                <div class="col-md-4">
+                    <div class="p-3 border rounded bg-white h-100">
+                        <h5>Habit Score</h5>
+                        <div class="display-6 text-warning">{{ user.habit_score }}</div>
+                        <span class="badge bg-secondary">{{ user.habit_tag }}</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 border rounded bg-white h-100">
+                        <h5>Intelligence</h5>
+                        <div class="display-6 text-success">{{ user.intelligence_score }}</div>
+                        <span class="badge bg-info">{{ user.intelligence_level }}</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 border rounded bg-white h-100">
+                        <h5>Top Skills</h5>
+                        <div class="mt-2">
+                        {% for skill in user.skills %}
+                            <div class="mb-1">
+                                <small class="fw-bold">{{ skill.language }}</small>
+                                <span class="badge bg-primary">{{ skill.badge }}</span>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-dark btn-lg me-2">Regenerate</a>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">View Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

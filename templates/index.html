@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <div class="card shadow p-5 mb-5 bg-white rounded">
+            <h1 class="display-4 text-primary fw-bold">Coder Nickname Generator</h1>
+            <p class="lead text-secondary">Discover your coder identity through deep analysis of your habits, intelligence, and skills.</p>
+            <hr class="my-4">
+            
+            <form action="{{ url_for('start_analysis') }}" method="POST" class="text-start">
+                <div class="mb-4">
+                    <label for="name" class="form-label h5">Your Coder Name / Real Name</label>
+                    <input type="text" class="form-control form-control-lg" id="name" name="name" required placeholder="Enter name...">
+                </div>
+
+                <h3 class="mt-5 mb-3">1. Coding Habits</h3>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Coding Hours / Day</label>
+                        <input type="number" class="form-control" name="hours" min="1" max="24" value="4">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Practice Frequency (Days/Week)</label>
+                        <select class="form-select" name="frequency">
+                            <option value="1">1-2 Days</option>
+                            <option value="3">3-4 Days</option>
+                            <option value="5" selected>5+ Days</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Preference</label>
+                        <select class="form-select" name="preference">
+                            <option value="Day">Day Person</option>
+                            <option value="Night">Night Owl</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Debugging Skill (1-5)</label>
+                        <input type="range" class="form-range" name="debug_skill" min="1" max="5" value="3">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Consistency Level (1-5)</label>
+                        <input type="range" class="form-range" name="consistency" min="1" max="5" value="4">
+                    </div>
+                </div>
+
+                <h3 class="mt-5 mb-3">2. Programming Skills</h3>
+                <div id="skills-container">
+                    <div class="row g-2 mb-2 skill-row">
+                        <div class="col-md-7">
+                            <input type="text" class="form-control" name="languages[]" placeholder="Language (e.g. Python, C++)" required>
+                        </div>
+                        <div class="col-md-5">
+                            <select class="form-select" name="levels[]">
+                                <option value="1">Beginner (1)</option>
+                                <option value="3" selected>Intermediate (3)</option>
+                                <option value="5">Expert (5)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="addSkill()">+ Add Another Skill</button>
+
+                <div class="mt-5 text-center">
+                    <button type="submit" class="btn btn-primary btn-lg px-5">Proceed to Intelligence Quiz &rarr;</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function addSkill() {
+    const container = document.getElementById('skills-container');
+    const newRow = document.createElement('div');
+    newRow.className = 'row g-2 mb-2 skill-row';
+    newRow.innerHTML = `
+        <div class="col-md-7">
+            <input type="text" class="form-control" name="languages[]" placeholder="Language">
+        </div>
+        <div class="col-md-5">
+            <select class="form-select" name="levels[]">
+                <option value="1">Beginner (1)</option>
+                <option value="3" selected>Intermediate (3)</option>
+                <option value="5">Expert (5)</option>
+            </select>
+        </div>
+    `;
+    container.appendChild(newRow);
+}
+</script>
+{% endblock %}

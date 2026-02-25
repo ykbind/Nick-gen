@@ -1,0 +1,39 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+}
+
+.result-card {
+    border: none;
+    border-radius: 20px;
+}
+
+.skill-row {
+    transition: all 0.3s ease;
+}
+
+.skill-row:hover {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.avatar-preview {
+    transition: transform 0.5s ease;
+}
+
+.avatar-preview:hover {
+    transform: rotate(5deg) scale(1.05);
+}
+
+.display-3 {
+    letter-spacing: -2px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0043a8 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0043a8 0%, #0d6efd 100%);
+}

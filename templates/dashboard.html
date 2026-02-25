@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">Coder Hall of Fame</h2>
+        
+        <div class="row">
+            {% for user in users %}
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        {% if user.avatar_path %}
+                        <img src="{{ url_for('static', filename='avatars/' + user.avatar_path) }}" alt="Avatar" class="img-fluid rounded-circle mb-3 avatar-preview" style="width: 80px; height: 80px; background: #fff;">
+                        {% else %}
+                        <div class="rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center bg-light" style="width: 80px; height: 80px; border: 2px solid #dee2e6;">
+                            <span class="h4 mb-0 text-muted">{{ user.name[0]|upper if user.name else '?' }}</span>
+                        </div>
+                        {% endif %}
+                        <h5 class="card-title text-truncate">{{ user.nickname }}</h5>
+                        <p class="card-subtitle mb-2 text-muted">{{ user.name }}</p>
+                        <div class="d-flex justify-content-center gap-1">
+                            <span class="badge bg-info text-dark">{{ user.intelligence_level }}</span>
+                            <span class="badge bg-secondary">{{ user.habit_tag }}</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-top-0 pb-3 text-center">
+                        <small class="text-muted">Joined: {{ user.created_at.strftime('%Y-%m-%d') }}</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if not users %}
+        <div class="alert alert-light text-center p-5">
+            <p class="h4">No coders found yet. Be the first!</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary mt-3">Start Now</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
