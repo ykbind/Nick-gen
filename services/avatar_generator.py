@@ -18,7 +18,7 @@ class AvatarGenerator:
     }
 
     @classmethod
-    def generate_svg(cls, user_id: int, intel_level: str, habit_tag: str, top_skill_badge: str, storage_path: str) -> str:
+    def generate_svg(cls, user_id: str, intel_level: str, habit_tag: str, top_skill_badge: str) -> str:
         color = cls.COLORS.get(intel_level, '#343a40')
         habit_svg = cls.HABIT_DECOR.get(habit_tag, f'<circle cx="50" cy="50" r="45" fill="{color}"/>')
         
@@ -43,13 +43,5 @@ class AvatarGenerator:
 {sparkle}
 </svg>"""
         
-        filename = f"avatar_{user_id}_{uuid.uuid4().hex[:8]}.svg"
-        full_path = os.path.join(storage_path, filename)
-        
-        # Ensure directory exists
-        os.makedirs(storage_path, exist_ok=True)
-        
-        with open(full_path, 'w') as f:
-            f.write(svg_content.strip())
-            
-        return filename
+        import base64
+        return f"data:image/svg+xml;base64,{base64.b64encode(svg_content.strip().encode()).decode()}"

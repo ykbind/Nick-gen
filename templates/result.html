@@ -6,7 +6,7 @@
         <div class="card shadow-lg text-center p-5 result-card">
             <div class="mb-4">
                 {% if user.avatar_path %}
-                <img src="{{ url_for('static', filename='avatars/' + user.avatar_path) }}" alt="Avatar" class="img-fluid rounded-circle border border-primary border-5 shadow avatar-preview" style="width: 200px; height: 200px; background: #fff;">
+                <img src="{{ user.avatar_path }}" alt="Avatar" class="img-fluid rounded-circle border border-primary border-5 shadow avatar-preview" style="width: 200px; height: 200px; background: #fff;">
                 {% else %}
                 <div class="rounded-circle border border-secondary border-5 shadow mx-auto d-flex align-items-center justify-content-center bg-light" style="width: 200px; height: 200px;">
                     <span class="display-1 text-muted">{{ user.name[0]|upper if user.name else '?' }}</span>

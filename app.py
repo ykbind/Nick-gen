@@ -123,15 +123,14 @@ def evaluate_quiz():
             'badge': s['badge']
         })
     
-    # Generate Avatar
-    avatar_filename = AvatarGenerator.generate_svg(
+    # Generate Avatar (Now returns Base64 string for Vercel support)
+    avatar_data = AvatarGenerator.generate_svg(
         str(user_id), 
         intel_results['level'], 
         habit_results['tag'], 
-        top_badge,
-        app.config['AVATAR_STORAGE_PATH']
+        top_badge
     )
-    User.update_avatar(user_id, avatar_filename)
+    User.update_avatar(user_id, avatar_data)
     
     session['last_user_id'] = str(user_id)
     return redirect(url_for('result', user_id=str(user_id)))
@@ -187,3 +186,6 @@ def analyze_interview():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+# Vercel entry point
+main = app

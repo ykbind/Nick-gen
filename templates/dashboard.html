@@ -11,7 +11,7 @@
                 <div class="card h-100 shadow-sm">
                     <div class="card-body text-center">
                         {% if user.avatar_path %}
-                        <img src="{{ url_for('static', filename='avatars/' + user.avatar_path) }}" alt="Avatar" class="img-fluid rounded-circle mb-3 avatar-preview" style="width: 80px; height: 80px; background: #fff;">
+                        <img src="{{ user.avatar_path }}" alt="Avatar" class="img-fluid rounded-circle mb-3 avatar-preview" style="width: 80px; height: 80px; background: #fff;">
                         {% else %}
                         <div class="rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center bg-light" style="width: 80px; height: 80px; border: 2px solid #dee2e6;">
                             <span class="h4 mb-0 text-muted">{{ user.name[0]|upper if user.name else '?' }}</span>
