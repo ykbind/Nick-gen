@@ -1,5 +1,6 @@
 Flask
-pymongo
+pymongo[srv]
+certifi
 python-dotenv
 typing-extensions
 blinker
