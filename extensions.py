@@ -12,7 +12,21 @@ class MongoDB:
     def init_app(self, app):
         uri = app.config.get('MONGO_URI', 'mongodb://localhost:27017/nickgen_db')
         # Use certifi's CA bundle for SSL/TLS verification (fixes Vercel/Serverless handshake issues)
-        self.client = MongoClient(uri, tlsCAFile=certifi.where())
-        self.db = self.client.get_default_database()
+        # Added connectTimeoutMS and connect=False for better serverless performance
+        self.client = MongoClient(
+            uri, 
+            tlsCAFile=certifi.where(),
+            connectTimeoutMS=30000,
+            socketTimeoutMS=None,
+            connect=False
+        )
+        # Lazy initialization via property
+        self._db = None
+
+    @property
+    def db(self):
+        if self._db is None:
+            self._db = self.client.get_default_database()
+        return self._db
 
 db = MongoDB()
