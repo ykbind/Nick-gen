@@ -12,11 +12,8 @@ def create_app():
     db.init_app(app)
 
     with app.app_context():
-        # Deferred imports to avoid circular dependency
-        from models.user import User
-        from models.skill import Skill
-        from models.team import Team
-        db.create_all()
+        # MongoDB handles collection creation on first insert
+        pass
 
     return app
 
@@ -30,7 +27,6 @@ from services.avatar_generator import AvatarGenerator
 from services.team_engine import TeamEngine
 from services.interview_analyzer import InterviewAnalyzer
 from models.user import User
-from models.skill import Skill
 from models.team import Team
 from constants import CATEGORIZED_QUESTIONS
 import random
@@ -108,8 +104,8 @@ def evaluate_quiz():
     # Generate Nickname
     nickname = NicknameEngine.generate(intel_results['level'], habit_results['tag'], top_badge)
     
-    # Save to Database
-    new_user = User(
+    # Save to MongoDB
+    new_user = User.create(
         name=session.get('user_name'),
         habit_score=habit_results['score'],
         habit_tag=habit_results['tag'],
@@ -117,52 +113,56 @@ def evaluate_quiz():
         intelligence_level=intel_results['level'],
         nickname=nickname
     )
-    db.session.add(new_user)
-    db.session.commit()
+    user_id = new_user["_id"]
     
     # Add Skills
     for s in processed_skills:
-        skill = Skill(user_id=new_user.id, language=s['language'], expertise_level=s['level'], badge=s['badge'])
-        db.session.add(skill)
+        User.add_skill(user_id, {
+            'language': s['language'], 
+            'expertise_level': s['level'], 
+            'badge': s['badge']
+        })
     
     # Generate Avatar
     avatar_filename = AvatarGenerator.generate_svg(
-        new_user.id, 
+        str(user_id), 
         intel_results['level'], 
         habit_results['tag'], 
         top_badge,
         app.config['AVATAR_STORAGE_PATH']
     )
-    new_user.avatar_path = avatar_filename
-    db.session.commit()
+    User.update_avatar(user_id, avatar_filename)
     
-    session['last_user_id'] = new_user.id
-    return redirect(url_for('result', user_id=new_user.id))
+    session['last_user_id'] = str(user_id)
+    return redirect(url_for('result', user_id=str(user_id)))
 
-@app.route('/result/<int:user_id>')
+@app.route('/result/<user_id>')
 def result(user_id):
-    user = User.query.get_or_404(user_id)
+    user = User.get_by_id(user_id)
+    if not user:
+        flash("User not found!")
+        return redirect(url_for('index'))
     return render_template('result.html', user=user)
 
 @app.route('/dashboard')
 def dashboard():
-    users = User.query.order_by(User.created_at.desc()).all()
+    users = User.get_all()
     return render_template('dashboard.html', users=users)
 
 @app.route('/team-mode')
 def team_list():
-    teams = Team.query.all()
+    teams = Team.get_all()
     
     # Simple analysis based on all users
-    all_users = User.query.all()
+    all_users = User.get_all()
     analysis = None
     if all_users:
         members_data = []
         for u in all_users:
             members_data.append({
-                'intelligence_score': u.intelligence_score,
-                'habit_tag': u.habit_tag,
-                'skills': [{'language': s.language, 'expertise_level': s.expertise_level} for s in u.skills]
+                'intelligence_score': u['intelligence_score'],
+                'habit_tag': u['habit_tag'],
+                'skills': u['skills']
             })
         analysis = TeamEngine.generate_team_analysis(members_data)
         
@@ -171,9 +171,7 @@ def team_list():
 @app.route('/create-team', methods=['POST'])
 def create_team():
     name = request.form.get('team_name')
-    new_team = Team(team_name=name)
-    db.session.add(new_team)
-    db.session.commit()
+    Team.create(name)
     flash(f'Team "{name}" created successfully!')
     return redirect(url_for('team_list'))
 

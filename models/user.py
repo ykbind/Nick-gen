@@ -1,21 +1,47 @@
 from extensions import db
 from datetime import datetime
 
-class User(db.Model):
-    __tablename__ = 'users'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    habit_score = db.Column(db.Integer, default=0)
-    intelligence_score = db.Column(db.Integer, default=0)
-    intelligence_level = db.Column(db.String(50)) # Beginner, Intermediate, Pro
-    nickname = db.Column(db.String(150))
-    avatar_path = db.Column(db.String(255))
-    habit_tag = db.Column(db.String(100))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Relationships
-    skills = db.relationship('Skill', backref='user', lazy=True)
-    
-    def __repr__(self):
-        return f'<User {self.name}>'
+class User:
+    collection = "users"
+
+    @staticmethod
+    def create(name, habit_score, habit_tag, intelligence_score, intelligence_level, nickname):
+        user_doc = {
+            "name": name,
+            "habit_score": habit_score,
+            "habit_tag": habit_tag,
+            "intelligence_score": intelligence_score,
+            "intelligence_level": intelligence_level,
+            "nickname": nickname,
+            "avatar_path": "",
+            "skills": [],
+            "created_at": datetime.utcnow()
+        }
+        result = db.db[User.collection].insert_one(user_doc)
+        user_doc["_id"] = result.inserted_id
+        return user_doc
+
+    @staticmethod
+    def get_by_id(user_id):
+        from bson.objectid import ObjectId
+        return db.db[User.collection].find_one({"_id": ObjectId(user_id)})
+
+    @staticmethod
+    def get_all():
+        return list(db.db[User.collection].find().sort("created_at", -1))
+
+    @staticmethod
+    def update_avatar(user_id, avatar_path):
+        from bson.objectid import ObjectId
+        db.db[User.collection].update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": {"avatar_path": avatar_path}}
+        )
+
+    @staticmethod
+    def add_skill(user_id, skill_data):
+        from bson.objectid import ObjectId
+        db.db[User.collection].update_one(
+            {"_id": ObjectId(user_id)},
+            {"$push": {"skills": skill_data}}
+        )
