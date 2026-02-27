@@ -5,7 +5,7 @@ import certifi
 class MongoDB:
     def __init__(self, app=None):
         self.client = None
-        self.db = None
+        self._db = None
         if app is not None:
             self.init_app(app)
 
